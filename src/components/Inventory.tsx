@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Search, Plus, Trash2, Edit, AlertCircle } from 'lucide-react';
+import { Search, Plus, Trash2, Edit, AlertCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface Product {
@@ -15,7 +15,7 @@ interface Product {
 
 export const Inventory = () => {
     const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [showModal, setShowModal] = useState(false);
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);

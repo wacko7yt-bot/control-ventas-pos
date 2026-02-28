@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import {
     TrendingUp,
@@ -7,12 +7,9 @@ import {
     ArrowUpRight,
     ArrowDownRight,
     Database,
-    Search,
     Plus
 } from 'lucide-react';
 import {
-    BarChart,
-    Bar,
     XAxis,
     YAxis,
     CartesianGrid,

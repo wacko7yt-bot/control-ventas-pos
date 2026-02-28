@@ -1,12 +1,9 @@
-import React from 'react';
 import {
     LayoutDashboard,
     Package,
     ShoppingCart,
-    Users,
     TrendingUp,
-    Settings,
-    LogOut
+    Settings
 } from 'lucide-react';
 
 interface SidebarProps {
