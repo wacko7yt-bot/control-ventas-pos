@@ -31,24 +31,51 @@ const data = [
 
 export const Dashboard = () => {
     const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
-    const [productCount, setProductCount] = useState(0);
+    const [stats, setStats] = useState({
+        products: 0,
+        totalSales: 0,
+        totalCosts: 0
+    });
 
     useEffect(() => {
-        async function checkConnection() {
+        async function fetchDashboardData() {
             try {
-                const { count, error } = await supabase
+                // 1. Conexión y Conteo de Productos
+                const { count: productCount, error: pError } = await supabase
                     .from('products')
                     .select('*', { count: 'exact', head: true });
 
-                if (error) throw error;
+                if (pError) throw pError;
+
+                // 2. Suma de Ventas Reales (desde tabla sales)
+                const { data: salesData, error: sError } = await supabase
+                    .from('sales')
+                    .select('total_amount');
+
+                if (sError) throw sError;
+                const totalSales = salesData?.reduce((acc, sale) => acc + (sale.total_amount || 0), 0) || 0;
+
+                // 3. Valor del Inventario (Suma de Precio de Venta * Stock)
+                const { data: productsData, error: prError } = await supabase
+                    .from('products')
+                    .select('price, stock');
+
+                if (prError) throw prError;
+                const totalInventoryValue = productsData?.reduce((acc, p) => acc + (p.price * p.stock), 0) || 0;
+
+                setStats({
+                    products: productCount || 0,
+                    totalSales: totalSales,
+                    totalCosts: totalInventoryValue
+                });
                 setDbStatus('connected');
-                setProductCount(count || 0);
+
             } catch (err) {
-                console.error('Supabase connection error:', err);
+                console.error('Dashboard logic error:', err);
                 setDbStatus('error');
             }
         }
-        checkConnection();
+        fetchDashboardData();
     }, []);
 
     return (
@@ -82,11 +109,11 @@ export const Dashboard = () => {
                             <ShoppingCart size={20} />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', color: '#10b981', gap: '4px' }}>
-                            <ArrowUpRight size={16} /> <span style={{ fontSize: '12px', fontWeight: 700 }}>+12%</span>
+                            <ArrowUpRight size={16} /> <span style={{ fontSize: '12px', fontWeight: 700 }}>Real</span>
                         </div>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Ventas del Mes</p>
-                    <h2 style={{ fontSize: '24px', fontWeight: 800 }}>$14,230.00</h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Ventas Acumuladas</p>
+                    <h2 style={{ fontSize: '24px', fontWeight: 800 }}>${stats.totalSales.toLocaleString()}</h2>
                 </div>
 
                 <div className="glass glass-hover" style={{ padding: '1.5rem' }}>
@@ -95,11 +122,11 @@ export const Dashboard = () => {
                             <Package size={20} />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', color: '#94a3b8', gap: '4px' }}>
-                            <span style={{ fontSize: '12px', fontWeight: 700 }}>Total SKUs</span>
+                            <span style={{ fontSize: '12px', fontWeight: 700 }}>Activos</span>
                         </div>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Productos en Stock</p>
-                    <h2 style={{ fontSize: '24px', fontWeight: 800 }}>{productCount} Items</h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Productos Registrados</p>
+                    <h2 style={{ fontSize: '24px', fontWeight: 800 }}>{stats.products} Items</h2>
                 </div>
 
                 <div className="glass glass-hover" style={{ padding: '1.5rem' }}>
@@ -108,11 +135,11 @@ export const Dashboard = () => {
                             <TrendingUp size={20} />
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', color: '#f87171', gap: '4px' }}>
-                            <ArrowDownRight size={16} /> <span style={{ fontSize: '12px', fontWeight: 700 }}>-5%</span>
+                            <span style={{ fontSize: '12px', fontWeight: 700 }}>Actual</span>
                         </div>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Costos de Operación</p>
-                    <h2 style={{ fontSize: '24px', fontWeight: 800 }}>$2,100.00</h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Valor de Inventario</p>
+                    <h2 style={{ fontSize: '24px', fontWeight: 800 }}>${stats.totalCosts.toLocaleString()}</h2>
                 </div>
             </div>
 
