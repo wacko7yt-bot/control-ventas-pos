@@ -5,7 +5,6 @@ import {
     Package,
     ShoppingCart,
     ArrowUpRight,
-    ArrowDownRight,
     Database,
     Plus
 } from 'lucide-react';
