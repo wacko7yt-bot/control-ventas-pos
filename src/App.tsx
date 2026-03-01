@@ -3,10 +3,11 @@ import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { Inventory } from './components/Inventory';
 import { Sales } from './components/Sales';
+import { Analytics } from './components/Analytics';
 import { Toaster } from 'react-hot-toast';
 
 function App() {
-  const [currentView, setCurrentView] = useState<'dashboard' | 'inventory' | 'sales'>('dashboard');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'inventory' | 'sales' | 'analytics'>('dashboard');
 
   return (
     <div className="app-container">
@@ -19,6 +20,7 @@ function App() {
         {currentView === 'dashboard' && <Dashboard />}
         {currentView === 'inventory' && <Inventory />}
         {currentView === 'sales' && <Sales />}
+        {currentView === 'analytics' && <Analytics />}
       </div>
     </div>
   );
