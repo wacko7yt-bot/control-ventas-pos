@@ -54,13 +54,17 @@ export const Dashboard = () => {
                 if (sError) throw sError;
                 const totalSales = salesData?.reduce((acc, sale) => acc + (sale.total_amount || 0), 0) || 0;
 
-                // 3. Valor del Inventario (Suma de Precio de Venta * Stock)
+                // 3. Valor del Inventario (Suma de Precio de Venta * Stock total de tallas)
                 const { data: productsData, error: prError } = await supabase
                     .from('products')
-                    .select('price, stock');
+                    .select('price, sizes');
 
                 if (prError) throw prError;
-                const totalInventoryValue = productsData?.reduce((acc, p) => acc + (p.price * p.stock), 0) || 0;
+
+                const totalInventoryValue = productsData?.reduce((acc, p) => {
+                    const productStock = (p.sizes as any[])?.reduce((sAcc, s) => sAcc + (s.stock || 0), 0) || 0;
+                    return acc + (p.price * productStock);
+                }, 0) || 0;
 
                 setStats({
                     products: productCount || 0,

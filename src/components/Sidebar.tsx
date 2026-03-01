@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 interface SidebarProps {
-    onViewChange: (view: 'dashboard' | 'inventory') => void;
+    onViewChange: (view: 'dashboard' | 'inventory' | 'sales') => void;
     currentView: string;
 }
 
@@ -33,7 +33,7 @@ export const Sidebar = ({ onViewChange, currentView }: SidebarProps) => {
                     {navItems.map((item) => (
                         <li key={item.id} style={{ marginBottom: '0.5rem' }}>
                             <button
-                                onClick={() => (item.id === 'dashboard' || item.id === 'inventory') && onViewChange(item.id as any)}
+                                onClick={() => (item.id === 'dashboard' || item.id === 'inventory' || item.id === 'sales') && onViewChange(item.id as any)}
                                 className={`transition-all ${currentView === item.id ? 'glass' : ''}`}
                                 style={{
                                     width: '100%',
@@ -46,8 +46,8 @@ export const Sidebar = ({ onViewChange, currentView }: SidebarProps) => {
                                     background: currentView === item.id ? 'rgba(190, 242, 100, 0.05)' : 'transparent',
                                     border: currentView === item.id ? '1px solid rgba(190, 242, 100, 0.2)' : 'none',
                                     textAlign: 'left',
-                                    cursor: (item.id === 'dashboard' || item.id === 'inventory') ? 'pointer' : 'not-allowed',
-                                    opacity: (item.id === 'dashboard' || item.id === 'inventory') ? 1 : 0.5
+                                    cursor: (item.id === 'dashboard' || item.id === 'inventory' || item.id === 'sales') ? 'pointer' : 'not-allowed',
+                                    opacity: (item.id === 'dashboard' || item.id === 'inventory' || item.id === 'sales') ? 1 : 0.5
                                 }}
                             >
                                 <item.icon size={20} />
